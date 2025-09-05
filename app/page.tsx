@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -46,11 +47,30 @@ export default function LandingPage() {
       <nav className="navbar border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed w-full top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Blocks className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold text-foreground">
-                SupplySphere
-              </span>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="SupplySphere Logo"
+                  width={40}
+                  height={40}
+                  className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 object-contain"
+                />
+              </div>
+
+              {/* Text Content */}
+              <div className="flex flex-col justify-center min-w-0 leading-none">
+                {/* App Name */}
+                <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-foreground tracking-tight">
+                  SupplySphere
+                </h1>
+
+                {/* Slogan */}
+                <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground/80 font-medium -mt-0.5 tracking-wide">
+                  Trace it. Trust it. Take it.
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <Link href="/auth/login">
@@ -312,11 +332,30 @@ export default function LandingPage() {
       <footer className="border-t bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="flex items-center gap-2">
-              <Blocks className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-foreground">
-                SupplySphere
-              </span>
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="SupplySphere Logo"
+                  width={32}
+                  height={32}
+                  className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 object-contain"
+                />
+              </div>
+
+              {/* Text Content */}
+              <div className="flex flex-col justify-center min-w-0 leading-none">
+                {/* App Name */}
+                <h2 className="text-sm sm:text-base md:text-lg font-semibold text-foreground tracking-tight">
+                  SupplySphere
+                </h2>
+
+                {/* Slogan */}
+                <p className="text-[8px] sm:text-[9px] md:text-[10px] text-muted-foreground/70 font-medium -mt-0.5 tracking-wide">
+                  Trace it. Trust it. Take it.
+                </p>
+              </div>
             </div>
             <p className="text-sm text-muted-foreground">
               © 2025 SupplySphere. All rights reserved.
