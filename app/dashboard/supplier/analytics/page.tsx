@@ -1,5 +1,7 @@
+
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { KPICard } from "@/components/dashboard/kpi-card"
 import { mockAnalytics } from "@/lib/mock-data"
@@ -17,11 +19,13 @@ import {
   Pie,
   Cell,
 } from "recharts"
-import { TrendingUp, DollarSign, Truck, Clock, Star } from "lucide-react"
+import { TrendingUp, DollarSign, Truck, Clock, Star, AlertCircle } from "lucide-react"
 
 const COLORS = ["#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"]
 
 export default function AnalyticsPage() {
+  const [isLoading, setIsLoading] = useState(true)
+
   const categoryData = [
     { name: "Vegetables", value: 35, count: 45 },
     { name: "Meat", value: 25, count: 32 },
@@ -29,6 +33,55 @@ export default function AnalyticsPage() {
     { name: "Dairy", value: 15, count: 19 },
     { name: "Other", value: 5, count: 8 },
   ]
+
+  useEffect(() => {
+    // Simulate data loading
+    const timer = setTimeout(() => setIsLoading(false), 1000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
+          <p className="text-muted-foreground">Track performance metrics and business insights</p>
+        </div>
+
+        {/* Loading skeleton for KPI cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          {[...Array(5)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+                  <div className="h-4 w-4 bg-muted rounded-full animate-pulse" />
+                </div>
+                <div className="h-8 w-24 bg-muted rounded mt-2 animate-pulse" />
+                <div className="h-3 w-32 bg-muted rounded mt-1 animate-pulse" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Loading skeleton for charts */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <div className="h-6 w-48 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-64 bg-muted rounded animate-pulse" />
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 w-full bg-muted rounded animate-pulse" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -85,21 +138,28 @@ export default function AnalyticsPage() {
             <CardDescription>Revenue performance over the last 6 months</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={mockAnalytics.monthlyRevenue}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, "Revenue"]} />
-                <Line
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#0ea5e9"
-                  strokeWidth={3}
-                  dot={{ fill: "#0ea5e9", strokeWidth: 2, r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {mockAnalytics.monthlyRevenue.length === 0 ? (
+              <div className="text-center py-12">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No revenue data available</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={mockAnalytics.monthlyRevenue}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, "Revenue"]} />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#0ea5e9"
+                    strokeWidth={3}
+                    dot={{ fill: "#0ea5e9", strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
@@ -110,16 +170,23 @@ export default function AnalyticsPage() {
             <CardDescription>Delivered vs delayed shipments by day</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={mockAnalytics.deliveryMetrics}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="delivered" fill="#10b981" name="Delivered" />
-                <Bar dataKey="delayed" fill="#ef4444" name="Delayed" />
-              </BarChart>
-            </ResponsiveContainer>
+            {mockAnalytics.deliveryMetrics.length === 0 ? (
+              <div className="text-center py-12">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No delivery data available</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={mockAnalytics.deliveryMetrics}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="delivered" fill="#10b981" name="Delivered" />
+                  <Bar dataKey="delayed" fill="#ef4444" name="Delayed" />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
@@ -130,25 +197,32 @@ export default function AnalyticsPage() {
             <CardDescription>Products by category</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            {categoryData.length === 0 ? (
+              <div className="text-center py-12">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No category data available</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 
@@ -159,29 +233,42 @@ export default function AnalyticsPage() {
             <CardDescription>Best selling products this month</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {[
-                { name: "Organic Tomatoes", sales: 1250, growth: 15.2 },
-                { name: "Premium Beef", sales: 980, growth: 8.7 },
-                { name: "Artisan Bread", sales: 750, growth: 12.1 },
-                { name: "Fresh Milk", sales: 650, growth: -2.3 },
-                { name: "Free Range Eggs", sales: 580, growth: 6.8 },
-              ].map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{product.name}</p>
-                    <p className="text-sm text-muted-foreground">{product.sales} units sold</p>
-                  </div>
-                  <div className="text-right">
-                    <div className={`text-sm font-medium ${product.growth > 0 ? "text-green-600" : "text-red-600"}`}>
-                      {product.growth > 0 ? "+" : ""}
-                      {product.growth}%
+            {[
+              { name: "Organic Tomatoes", sales: 1250, growth: 15.2 },
+              { name: "Premium Beef", sales: 980, growth: 8.7 },
+              { name: "Artisan Bread", sales: 750, growth: 12.1 },
+              { name: "Fresh Milk", sales: 650, growth: -2.3 },
+              { name: "Free Range Eggs", sales: 580, growth: 6.8 },
+            ].length === 0 ? (
+              <div className="text-center py-8">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No product data available</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {[
+                  { name: "Organic Tomatoes", sales: 1250, growth: 15.2 },
+                  { name: "Premium Beef", sales: 980, growth: 8.7 },
+                  { name: "Artisan Bread", sales: 750, growth: 12.1 },
+                  { name: "Fresh Milk", sales: 650, growth: -2.3 },
+                  { name: "Free Range Eggs", sales: 580, growth: 6.8 },
+                ].map((product, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                      <p className="font-medium">{product.name}</p>
+                      <p className="text-sm text-muted-foreground">{product.sales} units sold</p>
                     </div>
-                    <div className="text-xs text-muted-foreground">vs last month</div>
+                    <div className="text-right">
+                      <div className={`text-sm font-medium ${product.growth > 0 ? "text-green-600" : "text-red-600"}`}>
+                        {product.growth > 0 ? "+" : ""}
+                        {product.growth}%
+                      </div>
+                      <div className="text-xs text-muted-foreground">vs last month</div>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
